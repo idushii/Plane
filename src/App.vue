@@ -56,14 +56,11 @@ export default {
     handleDayChanged(e) {
       this.Title = `События ${e.date}`
       this.CurDate = e.date
-      if (this.editEventData.key)
-        this.editEventData = this.getEmptyEvent();
+      if (!this.editEventData.key) this.editEventData = this.getEmptyEvent();
     },
     addEvent(e) {
       let editEvent = {...this.editEventData};
-      try {
-        editEvent.desc = editEvent.desc.replace(/(?:\\[rn]|[\r\n])/g,"<br>")
-      } catch(e) {}
+      try { editEvent.desc = editEvent.desc.replace(/(?:\\[rn]|[\r\n])/g,"<br>"); } catch(e) {}
       console.log(editEvent)
       if (editEvent.key) {
         // обновить событие
@@ -75,10 +72,10 @@ export default {
       this.editEventData = this.getEmptyEvent();
     },
     setEventData(event) {
-      this.editEventData = {...event, desc: event.desc.replace(/<br\s*[\/]?>/gi, "\n")}
+      let desc = ""; try { desc = event.desc.replace(/<br\s*[\/]?>/gi, "\n"); } catch(e) {}
+      this.editEventData = {...event, desc }
       this.$EventCalendar.toDate(event.date)
-      if (this.CurDate == '')
-        this.handleDayChanged(event)
+      if (this.CurDate == '') this.handleDayChanged(event)
     },
     removeEvent() {
       let num = this.List.reduce((result, event, index) => event.key == this.editEventData.key ? index : result, null)
