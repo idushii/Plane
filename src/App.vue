@@ -10,7 +10,7 @@
           >
             <div class="event-title">{{event.title}}</div>
             <div class="event-time">{{event.date}}</div>
-            <div class="event-desc" v-if="event.desc">{{event.desc}}</div>
+            <div class="event-desc" v-if="event.desc" v-html="event.desc"></div>
           </div>
           <div v-if="props.showEvents.filter(event => CurDate == '' ? true : event.date == CurDate).length == 0">Ничего не запланировано</div>
         </div>
@@ -60,7 +60,8 @@ export default {
         this.editEventData = this.getEmptyEvent();
     },
     addEvent(e) {
-      let editEvent = {...this.editEventData}
+      let editEvent = {...this.editEventData};
+      editEvent.desc = editEvent.desc.replace(/(?:\\[rn]|[\r\n])/g,"<br>")
       console.log(editEvent)
       if (editEvent.key) {
         // обновить событие
@@ -72,7 +73,10 @@ export default {
       this.editEventData = this.getEmptyEvent();
     },
     setEventData(event) {
-      this.editEventData = {...event}
+      this.editEventData = {...event, desc: event.desc.replace(/<br\s*[\/]?>/gi, "\n")}
+      this.$EventCalendar.toDate(event.date)
+      if (this.CurDate == '')
+        this.handleDayChanged(event)
     },
     removeEvent() {
       let num = this.List.reduce((result, event, index) => event.key == this.editEventData.key ? index : result, null)
@@ -102,7 +106,7 @@ export default {
       background-color: $color-bg;
     } 
     .events-wrapper {
-      .events { min-height: calc(100% - 220px); }
+      .events { min-height: calc(100% - 270px); }
       background-color: $color-bg !important;
       border-radius: 0px;
       color: $color-text;
@@ -158,7 +162,7 @@ export default {
 
         button#removeButton { float: left;  }
 
-        textarea { height: 50px;  }
+        textarea { height: 100px;  }
       }
       
     }
