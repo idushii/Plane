@@ -42,12 +42,12 @@ export default {
       editEventData: this.getEmptyEvent(),
       List: [{
         date: '2018/3/5', 
-        title: 'Foo',
+        title: 'Событие 1',
         key: '0'
       }, {
         date: '2018/3/7',
-        title: 'Bar',
-        desc: 'description',
+        title: 'Событие 2',
+        desc: 'Описание события',
         key: '1'
       }]
     }
