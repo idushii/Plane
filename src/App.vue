@@ -61,7 +61,9 @@ export default {
     },
     addEvent(e) {
       let editEvent = {...this.editEventData};
-      editEvent.desc = editEvent.desc.replace(/(?:\\[rn]|[\r\n])/g,"<br>")
+      try {
+        editEvent.desc = editEvent.desc.replace(/(?:\\[rn]|[\r\n])/g,"<br>")
+      } catch(e) {}
       console.log(editEvent)
       if (editEvent.key) {
         // обновить событие
