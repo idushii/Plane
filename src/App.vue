@@ -1,6 +1,10 @@
 <template>
   <div>
-    <vue-event-calendar :title="Title" :events="List" @day-changed="handleDayChanged">
+    <div id="auth-wrap">
+      <button @click="showAuth = !showAuth">Авторизация</button>
+      <Auth v-if="showAuth" id="auth" />
+    </div>
+    <vue-event-calendar :title="Title" :events="List" @day-changed="handleDayChanged" v-if="!showAuth">
       <template scope="props">
         <div class="events">
           <div 
@@ -27,14 +31,11 @@
 </template>
 
 <script>
+import Auth from './Auth.vue'
+
 export default {
   name: 'app',
   computed: {},
-  watch: {
-    List(newList, oldList) {
-      localStorage['ListEvents'] = JSON.stringify(newList)
-    }
-  },
   data () {
     return {
       Title: "Все события",
@@ -49,10 +50,15 @@ export default {
         title: 'Событие 2',
         desc: 'Описание события',
         key: '1'
-      }]
+      }],
+      showAuth: false
     }
   },
   methods: {
+    save() {
+      localStorage['ListEvents'] = JSON.stringify(this.List)
+      globalStorage.setItem('List', this.List)
+    },
     handleDayChanged(e) {
       this.Title = `События ${e.date}`
       this.CurDate = e.date
@@ -69,6 +75,7 @@ export default {
         // Новое событие
         this.List.push({...editEvent, date: this.CurDate, key: this.List.length})
       }
+      this.save()
       this.editEventData = this.getEmptyEvent();
     },
     setEventData(event) {
@@ -80,6 +87,7 @@ export default {
     removeEvent() {
       let num = this.List.reduce((result, event, index) => event.key == this.editEventData.key ? index : result, null)
       this.List.splice(num, 1)
+      this.save()
       this.editEventData = this.getEmptyEvent();
     },
     getEmptyEvent() {
@@ -87,8 +95,10 @@ export default {
     }
   },
   mounted() {
-    if (localStorage['ListEvents'])
-      this.List = JSON.parse(localStorage['ListEvents'])
+    if (localStorage['ListEvents']) this.List = JSON.parse(localStorage['ListEvents'])
+  },
+  components: {
+    Auth
   }
 }
 </script>
@@ -149,7 +159,6 @@ export default {
           width: 100%; 
           margin: 10px 0px 5px; 
           padding: 5px 0px;
-
         }
         
         button { 
@@ -167,5 +176,49 @@ export default {
     }
   }
 
-  
+$offset: 20px;
+
+#auth-wrap {
+  width: 100%;
+  margin: $offset;
+}
+
+$width-auth: 200px;
+@media screen and (min-width: 768px) {
+  #auth-wrap {
+    max-width: 1200px;
+    margin: $offset auto;
+  }
+}
+
+#auth {
+  background: $color-bg;
+  color: $color-text;
+  margin-top: $offset;
+  padding: 100px $offset;
+  //min-height: 500px;
+  text-align: center;
+
+  input {
+    border-style: none; 
+    border-bottom: 1px solid $color-text; 
+    background: transparent;
+    width: $width-auth; 
+    margin: 10px 0px 5px; 
+    padding: 5px 0px;
+    &:focus { outline: 0 !important; }
+  }
+
+
+
+}
+
+button { 
+  margin-top: 10px;
+  padding: 5px 10px; 
+  border: 1px solid $color-text; 
+  width: $width-auth;
+  cursor: pointer;
+}
+
 </style>
