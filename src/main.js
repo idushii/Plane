@@ -8,5 +8,8 @@ Vue.use(vueEventCalendar, {locale: 'ru', color: '#333'})
 new Vue({
   el: '#app',
   render: h => h(App),
-  data() { return {} }
+  data() { return {
+    user: '',
+    password: ''
+  } }
 })

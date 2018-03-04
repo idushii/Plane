@@ -57,7 +57,9 @@ export default {
   methods: {
     save() {
       localStorage['ListEvents'] = JSON.stringify(this.List)
-      globalStorage.setItem('List', this.List)
+      //globalStorage.setItem('List', this.List)
+
+      firebase.database().ref(`API/${this.$root.user}-${this.$root.password}`).update(this.List)
     },
     handleDayChanged(e) {
       this.Title = `События ${e.date}`
