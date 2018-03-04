@@ -9,7 +9,6 @@ new Vue({
   el: '#app',
   render: h => h(App),
   data() { return {
-    user: '',
-    password: ''
+    uid: ''
   } }
 })

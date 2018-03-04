@@ -1,7 +1,7 @@
 <template>
   <div id="auth">
-    <input type="text" placeholder="Login" v-model="$root.user" /><br>
-    <input type="password" placeholder="Password" v-model="$root.password" /><br>
+    <input type="text" placeholder="Email" v-model="email" /><br>
+    <input type="password" placeholder="Password" v-model="password" /><br>
     <button @click="auth">Войти</button>
   </div>
 </template>
@@ -11,24 +11,39 @@ export default {
   name: "Auth",
   data() {
     return {
+      email: '',
+      password: '',
     };
   },
   mounted() {
-    this.user = localStorage['Plane.user'];
+    this.email = localStorage['Plane.email'];
+    this.$root.uid = localStorage['Plane.uid'];
+    //this.loadList()
   },
   methods: {
+    loadList() {
+      let link = this
+      firebase.database().ref(`API/${this.$root.uid}`).once('value').then(function(snapshot) {
+        link.$parent.List = snapshot.val()
+        link.$parent.showAuth = false;
+      }).catch(e => alert('Ошибка загрузки данных'))
+    },
     auth() {
-      /*globalStorage.auth(this.user, this.password).then(r => {
-        this.$parent.List = globalStorage.getItem("List")
-        this.$parent.showAuth = false;
-      }).catch(e => alert('Ошибка авторизации'))//*/
-      let link = this.$parent
-      firebase.database().ref(`API/${this.$root.user}-${this.$root.password}`).once('value').then(function(snapshot) {
-        link.List = snapshot.val()
-        link.showAuth = false;
-      }).catch(e => alert('Ошибка авторизации'))//*/
+      let link = this
+      localStorage['Plane.email'] = this.email;
 
-      localStorage['Plane.user'] = this.user;
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+      .then(r => {
+        link.$root.uid = firebase.auth().currentUser.uid
+        localStorage['Plane.uid'] = link.$root.uid
+        link.loadList()
+      })
+      .catch(function(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        alert(error.message)
+      });
+
     }
   }
 };

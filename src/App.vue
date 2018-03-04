@@ -58,12 +58,12 @@ export default {
     save() {
       localStorage['ListEvents'] = JSON.stringify(this.List)
       //globalStorage.setItem('List', this.List)
-      if (this.$root.user) firebase.database().ref(`API/${this.$root.user}-${this.$root.password}`).set(this.List)
+      if (this.$root.uid) firebase.database().ref(`API/${this.$root.uid}`).set(this.List)
     },
     handleDayChanged(e) {
       this.Title = `События ${e.date}`
       this.CurDate = e.date
-      if (!this.editEventData.key) this.editEventData = this.getEmptyEvent();
+      if (this.editEventData.key) this.editEventData = this.getEmptyEvent();
     },
     addEvent(e) {
       let editEvent = {...this.editEventData};
