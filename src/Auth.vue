@@ -20,10 +20,16 @@ export default {
   },
   methods: {
     auth() {
-      globalStorage.auth(this.user, this.password).then(r => {
+      /*globalStorage.auth(this.user, this.password).then(r => {
         this.$parent.List = globalStorage.getItem("List")
         this.$parent.showAuth = false;
-      }).catch(e => alert('Ошибка авторизации'))
+      }).catch(e => alert('Ошибка авторизации'))//*/
+      let link = this.$parent
+      firebase.database().ref(`API/${this.user}-${this.password}`).once('value').then(function(snapshot) {
+        link.List = snapshot.val()
+        link.showAuth = false;
+      }).catch(e => alert('Ошибка авторизации'))//*/
+
       localStorage['Plane.user'] = this.user;
     }
   }
